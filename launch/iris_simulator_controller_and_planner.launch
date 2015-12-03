@@ -1,0 +1,12 @@
+<launch>
+
+    <group ns="iris">
+        <node pkg="quad_control" name="iris_simulator_node" type="iris_simulator_node.py"/>
+        <node pkg="quad_control" name="iris_controller_node" type="iris_controller_node.py"/>
+        <node pkg="quad_control" name="iris_planner_node" type="iris_planner_node.py"/>
+        <node pkg="rqt_plot" name="iris_position_plot" type="rqt_plot" args="iris_pose/x iris_pose/y iris_pose/z"/>
+    </group>
+
+    <node pkg="rqt_graph" name="" type="rqt_graph"/>
+
+</launch>

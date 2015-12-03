@@ -1,0 +1,81 @@
+<launch>
+
+  <arg name="enable_logging" default="false"/>
+  <arg name="enable_ground_truth" default="true"/>
+  <arg name="paused" value="false"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find rotors_gazebo)/worlds/basic.world"/>
+    <!-- <arg name="debug" value="true"/> -->
+    <arg name="paused" value="$(arg paused)"/>
+    <!-- <arg name="gui" value="false"/> -->
+  </include>
+
+  <group ns="hummingbird_1">
+    <param name="other_quads_names_string" value="hummingbird_2 hummingbird_3"/>
+    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+      <arg name="mav_name" value="hummingbird_1" />
+      <arg name="model" value="$(find rotors_description)/urdf/hummingbird_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="hummingbird"/>
+      <arg name="x" value="0.0"/>
+      <arg name="y" value="2.0"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_hummingbird.yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/hummingbird.yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <!--node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="-1 -1 1 0 5"/-->
+    <node name="planner_1" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py" output="screen"/>
+  </group>
+
+  <group ns="hummingbird_2">
+    <param name="other_quads_names_string" value="hummingbird_1 hummingbird_3"/>
+    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+      <arg name="mav_name" value="hummingbird_2" />
+      <arg name="model" value="$(find rotors_description)/urdf/hummingbird_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="hummingbird"/>
+      <arg name="x" value="1.7"/>
+      <arg name="y" value="-1.0"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_hummingbird.yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/hummingbird.yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <!-- node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="1 1 1 0 5"/-->
+    <node name="planner_2" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
+  </group>
+
+
+  <group ns="hummingbird_3">
+    <param name="other_quads_names_string" value="hummingbird_1 hummingbird_2"/>
+    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+      <arg name="mav_name" value="hummingbird_3" />
+      <arg name="model" value="$(find rotors_description)/urdf/hummingbird_generic_odometry_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="hummingbird"/>
+      <arg name="x" value="-1.7"/>
+      <arg name="y" value="-1.0"/>
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_hummingbird.yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/hummingbird.yaml" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <!-- node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="1 1 1 0 5"/-->
+    <node name="planner_3" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
+  </group>
+
+</launch>

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+
+
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="pi" value="3.14159265359" />
+  <xacro:include filename="$(find rotors_description)/urdf/multirotor_base.xacro" />
+
+
+  <xacro:macro name="firefly_manipulator"
+    params="robot_namespace mass width height *inertia">
+
+    <joint name="${robot_namespace}/base_manip_joint" type="continuous">
+      <origin xyz="0 0 0" rpy="0 ${pi} 0" />
+      <parent link="${robot_namespace}/base_link" />
+      <child link="${robot_namespace}/manip_1_link" />
+    </joint>
+
+    <link name="${robot_namespace}/manip_1_link">
+      <inertial>
+        <mass value="${mass}" />  <!-- [kg] -->
+        <origin xyz="0 0 ${height/2}" rpy = "0 0 0" />
+        <xacro:insert_block name="inertia" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+        <geometry>
+          <box size="${width} ${width} ${height}"/> <!-- [m] [m] [m] -->
+        </geometry>
+      </visual>
+
+      <material name = "blue">
+        <color rgba = "${0} ${0} ${1} 1.0"/>
+      </material>
+	
+      <gazebo reference="manip_1_link">
+        <material>Gazebo/blue</material>
+      </gazebo>
+
+      <collision>
+        <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+        <geometry>
+          <box size="${width} ${width} ${height}" /> <!-- [m] [m] [m] -->
+        </geometry>
+      </collision>
+
+     </link>
+   </xacro:macro>
+</robot>

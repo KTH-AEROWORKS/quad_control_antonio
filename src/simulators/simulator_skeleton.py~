@@ -1,0 +1,15 @@
+class QuadSimulator:
+    """Skeleton class for the quad simulator.
+    You can think about it as an abstract class.
+    The real simulators are obtained by inheritance.
+    Each inherited simulator must implement the 'update_pose' function, which
+    defines the dynamics of the simulator.
+    """
+    
+    def __init__(self, t, p, ea_deg, u):
+        pass
+        
+    def update_pose(self, tf, p, ea_deg, u):
+        new_p = None
+        new_ea_deg = None
+        return new_p, new_ea_deg
