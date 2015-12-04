@@ -1,5 +1,5 @@
 import numpy
-
+import random
 
 class PlannerCollisionAvoidanceMultiple:
     """A planner to avoid collisions with multiple obstacles and with the
@@ -12,7 +12,7 @@ class PlannerCollisionAvoidanceMultiple:
     """
 
 
-    def __init__(self, gain, ths):
+    def __init__(self, gain, ths, max_acc, max_vel):
         """The constructor takes a gain and a threshold.
         The threshold is the distance where the collision avoidance starts to
         take effect.
@@ -20,6 +20,9 @@ class PlannerCollisionAvoidanceMultiple:
         
         self._gain = gain
         self._ths = ths
+        self._max_acc = max_acc
+        self._max_vel = max_vel
+        self._shake = random.random()
 
 
     def _rotate_2d_array_by_pi_halves(self, array):
@@ -39,19 +42,22 @@ class PlannerCollisionAvoidanceMultiple:
         return acc_sat
     
     
-    def _get_vel_from_obstacle(self, quad_pos, obs_pos):
+    def _get_vel_from_obstacle(self, quad_pos, obs_pos, time):
 
         k = self._gain
         s = self._ths
+        
+        cs = numpy.cos(time)
+        sn = numpy.sin(self._shake*time)
         
         po = obs_pos[0:3]
         p = quad_pos[0:3]
         d = numpy.linalg.norm(po-p)
         
         if d < s:
-            vel3 = -k*(po-p)/d*(1.0/d-1.0/s) 
-            #aux = self._rotate_2d_array_by_pi_halves(vel3[0:2])
-            #vel[0:2] += 0.2*k*aux
+            vel3 = -k*(po-p)/d*(1.0/d**2-1.0/s**2) 
+            aux = self._rotate_2d_array_by_pi_halves(vel3[0:2])
+            vel3[0:2] += (1+sn)*k*aux
             #acc[2] = 0.0
             vel4 = numpy.concatenate([vel3, numpy.array([0.0])])
             print vel4
@@ -128,14 +134,14 @@ class PlannerCollisionAvoidanceMultiple:
         return acc
         
     
-    def get_velocity(self, quad_pos, obss_poss):
+    def get_velocity(self, quad_pos, obss_poss, time):
         
         vel = numpy.zeros(4)
         
         for obs_pos in obss_poss:
-            vel += self._get_vel_from_obstacle(quad_pos, obs_pos)
+            vel += self._get_vel_from_obstacle(quad_pos, obs_pos, time)
             
         vel += self._get_vel_from_ground(quad_pos)
-        vel = self._saturate(vel, 0.6)
+        vel = self._saturate(vel, self._max_vel)
 
         return vel

@@ -12,7 +12,7 @@ class PlannerToGoal:
     """
 
 
-    def __init__(self, goal_point, gain_pos, gain_vel):
+    def __init__(self, goal_point, gain_pos, gain_vel, max_acc, max_vel):
         """The constructor takes a goal point in 4D and saves it as a property.
         It also sets gains.
         """
@@ -20,6 +20,8 @@ class PlannerToGoal:
         self._goal_point = goal_point
         self._gain_pos = gain_pos
         self._gain_vel = gain_vel
+        self._max_acc = max_acc
+        self._max_vel = max_vel
         
     
     def _saturate(self, acc, ths):
@@ -58,7 +60,7 @@ class PlannerToGoal:
         p = quad_pos
         
         vel = kp*(ps-p)
-        vel = self._saturate(vel, 0.3)
+        vel = self._saturate(vel, 0.6)
         
         return vel
         

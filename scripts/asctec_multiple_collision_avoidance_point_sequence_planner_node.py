@@ -104,7 +104,7 @@ class AscTecMultipleCollisionAvoidancePointSequencePlannerNode():
         rospy.init_node('asctec_multiple_collision_avoidance_point_sequence_planner_node')
         
         # planner to compute the collision avoidance contributions
-        gain = 2.0
+        gain = 1.0
         ths = 0.5
         self._collision_avoidance_planner = pcam.PlannerCollisionAvoidanceMultiple(gain, ths)
         

@@ -75,7 +75,11 @@ class RotorSMultipleCollisionAvoidancePointSequencePlannerNode():
             #time = rospy.get_time() - self.initial_time
             #delay = rospy.get_param('delay', default=1.0)
             #self._roaming_planner = cbt.TrajectoryCubic(self._pos, numpy.eye(3), delay+time, delay+time+duration, self._waypoint)
-            self._roaming_planner = ptg.PlannerToGoal(self._waypoint, 2.0, 5.0)
+            pos_gain = 1.0
+            vel_gain = 5.0
+            max_acc = 3.0
+            max_vel = 0.7
+            self._roaming_planner = ptg.PlannerToGoal(self._waypoint, pos_gain, vel_gain, max_acc, max_vel)
         else:
             self._generate_waypoint()
 
@@ -94,7 +98,11 @@ class RotorSMultipleCollisionAvoidancePointSequencePlannerNode():
         #time = rospy.get_time() - self.initial_time
         #delay = rospy.get_param('delay', default=1.0)
         #self._roaming_planner = cbt.TrajectoryCubic(self._pos, numpy.eye(3), delay+time, delay+time+duration, self._waypoint)
-        self._roaming_planner = ptg.PlannerToGoal(self._waypoint, 0.5, 5.0)
+        pos_gain = 1.0
+        vel_gain = 5.0
+        max_acc = 3.0
+        max_vel = 0.6
+        self._roaming_planner = ptg.PlannerToGoal(self._waypoint, pos_gain, vel_gain, max_acc, max_vel)
 
 
 
@@ -104,9 +112,11 @@ class RotorSMultipleCollisionAvoidancePointSequencePlannerNode():
         rospy.init_node('rotors_multiple_collision_avoidance_point_sequence_planner_node')
         
         # planner to compute the collision avoidance contributions
-        gain = 0.0
-        ths = 0.1
-        self._collision_avoidance_planner = pcam.PlannerCollisionAvoidanceMultiple(gain, ths)
+        gain = 1.0
+        ths = 0.8
+        max_acc = 6.0
+        max_vel = 1.0
+        self._collision_avoidance_planner = pcam.PlannerCollisionAvoidanceMultiple(gain, ths, max_acc, max_vel)
         
         # planner to roam around
         # it will be set up in the callback
@@ -165,7 +175,7 @@ class RotorSMultipleCollisionAvoidancePointSequencePlannerNode():
             # compute collision avoidance contribution
             others_poss = [partner.pos for partner in self._other_quads.values()]
             #ca_acc = self._collision_avoidance_planner.get_acceleration(self._pos, self._vel, others_poss)
-            ca_vel = self._collision_avoidance_planner.get_velocity(self._pos, others_poss)
+            ca_vel = self._collision_avoidance_planner.get_velocity(self._pos, others_poss, rospy.get_time())
 
             # get current time
             #self.time = rospy.get_time() - self.initial_time
@@ -176,16 +186,20 @@ class RotorSMultipleCollisionAvoidancePointSequencePlannerNode():
             #print self._waypoint
             #print numpy.linalg.norm(self._pos-self._waypoint)
             
+            last_update = 0.0
+            
             if numpy.linalg.norm(self._pos-self._waypoint) < 0.15:
                 #print("\nNEW WAYPOINT!!!: " + str(waypoint_counter) + "\n")
                 #print("\nTIME: " + str(rospy.get_time()) + "\n")
                 waypoint_counter += 1
+                self._last_update = float(rospy.get_time())
                 self._generate_waypoint()
                 
             #print("TO GOAL: " + str(numpy.linalg.norm(self._pos-self._waypoint)))
             print("GOAL: " + str(self._waypoint))
             print("CURRENT: " + str(self._pos))
             print("TIME: " + str(rospy.get_time()))
+            print("TIME FROM LAST WAYPOINT: " + str(rospy.get_time()-self._last_update))
             print("WAYPOINTS REACHED: " + str(waypoint_counter))
             
             #r_acc = self._roaming_planner.get_acceleration(self._pos, self._vel)
