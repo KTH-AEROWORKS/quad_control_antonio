@@ -64,7 +64,9 @@ class RotorSPointSequencePlannerNode():
             #self.trajectory = qt.TrajectoryQuintic(self.quad_pose, numpy.eye(3), delay+time, delay+time+duration, self.waypoint)
             gain_pos = 1.0
             gain_vel = 3.0
-            self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel)
+            max_acc = 10.0
+            max_vel = 1.0
+            self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel, max_acc, max_vel)
         else:
             self._generate_waypoint()
 
@@ -85,7 +87,9 @@ class RotorSPointSequencePlannerNode():
         #self.trajectory = qt.TrajectoryQuintic(self.quad_pose, numpy.eye(3), delay+time, delay+time+duration, self.waypoint)
         gain_pos = 1.0
         gain_vel = 3.0
-        self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel)
+        max_acc = 10.0
+        max_vel = 1.0
+        self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel, max_acc, max_vel)
 
 
     def work(self):

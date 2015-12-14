@@ -123,6 +123,8 @@ def ea_deg_to_rot(ea_deg):
     
 
 def quaternion_to_rot(quaternion):
+    """This function converts a quaternion of type [x y z w]
+    into a rotation matrix."""
 
     q = quaternion
     q_v = q[0:3]
@@ -135,6 +137,8 @@ def quaternion_to_rot(quaternion):
     
     
 def rot_to_quaternion(rot_matrix):
+    """This function converts a rotation matrix
+    into a quaternion of type [x y z w]."""
 
      q_n = numpy.sqrt(1.0 + rot_matrix[0,0] + rot_matrix[1,1] + rot_matrix[2,2])/2.0
      q_v  = numpy.array([rot_matrix[2,1] - rot_matrix[1,2], rot_matrix[0,2] - rot_matrix[2,0],rot_matrix[1,0] - rot_matrix[0,1]])/(4*q_n)

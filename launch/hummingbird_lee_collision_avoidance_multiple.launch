@@ -30,7 +30,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <!--node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="-1 -1 1 0 5"/-->
-    <node name="planner_1" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py" output="screen"/>
+    <node name="planner_1" pkg="quad_control_antonio" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py" output="screen"/>
   </group>
 
   <group ns="hummingbird_2">
@@ -52,7 +52,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <!-- node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="1 1 1 0 5"/-->
-    <node name="planner_2" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
+    <node name="planner_2" pkg="quad_control_antonio" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
   </group>
 
 
@@ -75,7 +75,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
     <!-- node name="waypoint_publisher" pkg="rotors_gazebo" type="waypoint_publisher" output="screen" args="1 1 1 0 5"/-->
-    <node name="planner_3" pkg="quad_control" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
+    <node name="planner_3" pkg="quad_control_antonio" type="rotors_multiple_collision_avoidance_point_sequence_planner_node.py"/>
   </group>
 
 </launch>

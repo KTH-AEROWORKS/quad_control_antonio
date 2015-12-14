@@ -58,7 +58,7 @@ def odometry_msg_to_reference_point(msg):
     vel_body = numpy.array([aux3.x, aux3.y, aux3.z])
     vel_world = rot.dot(vel_body)
     aux4 = msg.twist.twist.angular
-    vel = numpy.concatenate([vel_world, numpy.array([aux4[2]])])
+    vel = numpy.concatenate([vel_world, numpy.array([aux4.z])])
 
     acc = numpy.zeros(4)
     jerk = numpy.zeros(4)

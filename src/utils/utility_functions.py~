@@ -136,7 +136,7 @@ def quaternion_to_rot(quaternion):
     
 def rot_to_quaternion(rot_matrix):
 
-     q_n = sqrt(1.0 + rot_matrix[0,0] + rot_matrix[1,1] + rot_matrix[2,2])/2.0
+     q_n = numpy.sqrt(1.0 + rot_matrix[0,0] + rot_matrix[1,1] + rot_matrix[2,2])/2.0
      q_v  = numpy.array([rot_matrix[2,1] - rot_matrix[1,2], rot_matrix[0,2] - rot_matrix[2,0],rot_matrix[1,0] - rot_matrix[0,1]])/(4*q_n)
 
      return numpy.concatenate([q_v,[q_n]])

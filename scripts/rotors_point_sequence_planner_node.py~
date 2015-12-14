@@ -64,7 +64,9 @@ class RotorSPointSequencePlannerNode():
             #self.trajectory = qt.TrajectoryQuintic(self.quad_pose, numpy.eye(3), delay+time, delay+time+duration, self.waypoint)
             gain_pos = 1.0
             gain_vel = 3.0
-            self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel)
+			max_acc = 10.0
+			max_vel = 1.0
+            self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel, max_acc, max_vel)
         else:
             self._generate_waypoint()
 
@@ -85,7 +87,9 @@ class RotorSPointSequencePlannerNode():
         #self.trajectory = qt.TrajectoryQuintic(self.quad_pose, numpy.eye(3), delay+time, delay+time+duration, self.waypoint)
         gain_pos = 1.0
         gain_vel = 3.0
-        self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel)
+		max_acc = 10.0
+		max_vel = 1.0
+        self._planner = ptg.PlannerToGoal(self._waypoint, gain_pos, gain_vel, max_acc, max_vel)
 
 
     def work(self):
@@ -98,14 +102,14 @@ class RotorSPointSequencePlannerNode():
         #self.time = rospy.get_time() - initial_time
         
         # instantiate the publisher
-        topic = rospy.get_param('ref_traj_topic', default='/hummingbird_leader/command/trajectory')
+        topic = rospy.get_param('ref_traj_topic', default='command/trajectory')
         pub = rospy.Publisher(topic, tm.MultiDOFJointTrajectory, queue_size=10)
 
         # to get the pose of the quad
         self._pos = None
         self._vel = None
         self._got_initial_pos_vel_flag = False
-        topic = rospy.get_param('quad_pos_topic', default='/hummingbird_leader/ground_truth/odometry')
+        topic = rospy.get_param('quad_pos_topic', default='ground_truth/odometry')
         rospy.Subscriber(topic, nm.Odometry, self._get_quad_pos_vel)
 
         # setting the frequency of execution

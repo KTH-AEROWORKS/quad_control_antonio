@@ -51,7 +51,7 @@
 
 
   <!-- The export tag contains other, unspecified, tags -->
-  <export>quad_control
+  <export>
     <!-- Other tools can request additional information be placed here -->
 
   </export>
