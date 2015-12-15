@@ -2,7 +2,7 @@
 
 
 
-
+  <!-- NEW FILE FOR THE LINK AND THE JOINT ("MANIPULATOR") -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="pi" value="3.14159265359" />
@@ -10,10 +10,10 @@
 
 
   <xacro:macro name="firefly_manipulator"
-    params="robot_namespace mass width height *inertia">
+    params="robot_namespace mass width height color direction time_constant_up time_constant_down max_rot_velocity motor_constant moment_constant motor_number *inertia">
 
     <joint name="${robot_namespace}/base_manip_joint" type="continuous">
-      <origin xyz="0 0 0" rpy="0 ${pi} 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <parent link="${robot_namespace}/base_link" />
       <child link="${robot_namespace}/manip_1_link" />
     </joint>
@@ -21,32 +21,49 @@
     <link name="${robot_namespace}/manip_1_link">
       <inertial>
         <mass value="${mass}" />  <!-- [kg] -->
-        <origin xyz="0 0 ${height/2}" rpy = "0 0 0" />
+        <origin xyz="0 0 ${-height/2}" rpy = "0 0 0" />
         <xacro:insert_block name="inertia" />
       </inertial>
 
       <visual>
-        <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+        <origin xyz="0 0 ${-height/2}" rpy="0 0 0" />
         <geometry>
           <box size="${width} ${width} ${height}"/> <!-- [m] [m] [m] -->
         </geometry>
       </visual>
 
-      <material name = "blue">
-        <color rgba = "${0} ${0} ${1} 1.0"/>
-      </material>
-	
-      <gazebo reference="manip_1_link">
-        <material>Gazebo/blue</material>
-      </gazebo>
-
+         
       <collision>
-        <origin xyz="0 0 ${height/2}" rpy="0 0 0" />
+
+        <origin xyz="0 0 ${-height/2}" rpy="0 0 0" />
         <geometry>
           <box size="${width} ${width} ${height}" /> <!-- [m] [m] [m] -->
         </geometry>
       </collision>
 
      </link>
+
+    <gazebo>
+      <plugin name="${robot_namespace}_manip_motor_1" filename="librotors_gazebo_motor_model.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <jointName>${robot_namespace}/base_manip_joint</jointName>
+        <linkName>${robot_namespace}/manip_1_link</linkName>
+        <turningDirection>${direction}</turningDirection>
+        <timeConstantUp>${time_constant_up}</timeConstantUp>
+        <timeConstantDown>${time_constant_down}</timeConstantDown>
+        <maxRotVelocity>${max_rot_velocity}</maxRotVelocity>
+        <motorConstant>${motor_constant}</motorConstant>
+        <momentConstant>${moment_constant}</momentConstant>
+        <commandSubTopic>gazebo/command/joint_1_speed</commandSubTopic>
+        <motorNumber>${motor_number}</motorNumber> 
+        <motorSpeedPubTopic>joint_1_speed</motorSpeedPubTopic>
+      </plugin>
+    </gazebo>     
+     <gazebo reference="${robot_namespace}/manip_1_link">
+        <material>Gazebo/${color}</material>
+     </gazebo>
+
+      
    </xacro:macro>
 </robot>
+
