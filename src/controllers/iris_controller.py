@@ -6,7 +6,7 @@ class IrisController:
     def __init__(self):
         pass
 
-    def control_law(self, pos, rot, vel, rp, rv, ra, rj, rs, rc):
+    def _control_law(self, pos, rot, vel, rp, rv, ra, rj, rs, rc):
         """Skeleton for the function 'control_law' that each controller needs
         to implement.
         You can consider it as an absract method.
@@ -21,6 +21,7 @@ class IrisController:
                 four channels of the remote
         """
         
+        raise NotImplementedError
         cmd = [None, None, None, None]
         
         return cmd

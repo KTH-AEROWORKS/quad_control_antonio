@@ -9,12 +9,11 @@ For example, we do such changes in the GUI.
 """
 
 import rospy
-
 import numpy as np
 
 
 # gravity
-g = rospy.get_param("g_ctr", 9.81)
+gravity = rospy.get_param("gravity_ctr", 9.81)
 
 # quad mass
 quad_mass = rospy.get_param("quad_mass_ctr", 1.442)
@@ -32,17 +31,11 @@ kp = rospy.get_param("kp", omega_n**2)
 sp = rospy.get_param("sp", 1.0)
 sv = rospy.get_param("sv", 1.0)
 
-# thrust that cancels the gravity
-neutral_thrust = rospy.get_param("neutral_thrust_ctr", 1430.0)
-
 # angular velocity sensitivity for the acro mode
 acro_rpp = rospy.get_param("acro_rpp_ctr", 4.5)
 
 # yaw gain
 k_yaw = rospy.get_param("k_yaw_ctr", 3.0)
-
-# desired yaw
-psi_des = 0.0
 
 # maximum roll and pitch angle
 max_tilt_deg = rospy.get_param("max_tilt_deg_ctr", 45.0)
@@ -51,11 +44,11 @@ max_tilt_deg = rospy.get_param("max_tilt_deg_ctr", 45.0)
 max_yaw_rate_deg = rospy.get_param("max_yaw_rate_deg_ctr", 200.0)
 
 # neutral control
-NEUTRAL_CONTROL_INPUT = [1500.0, 1500.0, 1500.0, 1500.0]
+neutral_throttle = 1484
+neutral_cmd = (1500, 1500, neutral_throttle, 1500)
 
 # conventional initial position of a quad
-QUAD_INITIAL_POSITION = np.array([0.0, 0.0, 1.0])
+init_pos = np.array([0.0, 0.0, 1.0])
 
-# thresholds
-MAX_TILT = np.pi/4
-MAX_YAW_RATE = np.pi/10
+# minimum acknowledged throttle
+min_throttle = 0.1

@@ -17,6 +17,9 @@ gravity = rospy.get_param("gravity", 9.81)
 # quad mass (kg)
 quad_mass = rospy.get_param("quad_mass", 1.442)
 
+# neuthral thrust (thrust that cancels the gravity)
+neutral_throttle = rospy.get_param("neutral_throttle", 1484)
+
 # maximum roll and pitch angle
 max_tilt_deg = rospy.get_param("max_tilt_deg", 45.0)
 
@@ -24,8 +27,7 @@ max_tilt_deg = rospy.get_param("max_tilt_deg", 45.0)
 max_yaw_rate_deg = rospy.get_param("max_yaw_rate_deg", 200.0)
 
 # neutral command
-neutral_throttle = rospy.get_param("neutral_throttle", 1484)
-neutral_cmd = (1500, 1500, neutral_throttle, 1500)
+neutral_cmd = [1500, 1500, neutral_throttle, 1500]
 
 # initial position
 init_pos = numpy.array([0.0, 0.0, 1.0])

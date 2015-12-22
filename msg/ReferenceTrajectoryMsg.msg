@@ -1,8 +1,8 @@
 # Reference trajecotries and derivatives
 
-float64[4] p
-float64[4] v
-float64[4] a
-float64[4] j
-float64[4] s
-float64[4] c
+float64[4] position
+float64[4] velocity
+float64[4] acceleration
+float64[4] jerk
+float64[4] snap
+float64[4] crackle

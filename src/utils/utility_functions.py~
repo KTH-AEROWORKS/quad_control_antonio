@@ -1,17 +1,19 @@
 """This file implements some utility functions
 """
 
-import numpy
+import numpy as np
 from numpy import cos as c
 from numpy import sin as s
 from numpy import pi
 
 
+e3 = np.array([0.0, 0.0, 1.0])
+
 def rot_x(tt):
     """This function returns the rotation matrix corresponding to a rotation
         of tt radians about the x-axis.
         """
-    return numpy.array(
+    return np.array(
         [[1.0, 0.0, 0.0], [0.0, c(tt), -s(tt)], [0.0, s(tt), c(tt)]])
 
 # print Rx(60*3.14/180)
@@ -21,7 +23,7 @@ def rot_y(tt):
     """This function returns the rotation matrix corresponding to a rotation
         of tt radians about the y-axis.
         """
-    return numpy.array(
+    return np.array(
         [[c(tt), 0.0, s(tt)], [0.0, 1, 0.0], [-s(tt), 0.0, c(tt)]])
 
 # print Ry(60*3.14/180)
@@ -31,7 +33,7 @@ def rot_z(tt):
     """This function returns the rotation matrix corresponding to a rotation
         of tt radians about the z-axis.
         """
-    return numpy.array(
+    return np.array(
         [[c(tt), -s(tt), 0.0], [s(tt), c(tt), 0.0], [0.0, 0.0, 1]])
 
 # print Rz(60*3.14/180)
@@ -44,7 +46,7 @@ def skew(v):
     x = v[0]
     y = v[1]
     z = v[2]
-    return numpy.array([[0, -z, y], [z, 0, -x], [-y, x, 0]])
+    return np.array([[0, -z, y], [z, 0, -x], [-y, x, 0]])
 
 # print skew([1,2,3])
 
@@ -64,7 +66,7 @@ def unit_vec(psi, theta):
     """This function returns the unit vector corresponding to the euler angles
     psi (about the z-axis) and theta (about the y'-axis).
     """
-    e1 = numpy.array([1.0, 0.0, 0.0])
+    e1 = np.array([1.0, 0.0, 0.0])
     aux = rot_z(psi).dot(e1)
     aux = rot_y(theta).dot(aux)
     return aux
@@ -86,12 +88,12 @@ def rot_to_ea(rot):
     matrix rot_max.
     """
     
-    phi = numpy.arctan2(
+    phi = np.arctan2(
         saturate(rot[2, 1], 1, -1), saturate(rot[2, 2], 1, -1))
-    theta = numpy.arcsin(-saturate(rot[2, 0], 1, -1))
-    psi = numpy.arctan2(
+    theta = np.arcsin(-saturate(rot[2, 0], 1, -1))
+    psi = np.arctan2(
         saturate(rot[1, 0], 1, -1), saturate(rot[0, 0], 1, -1))
-    return numpy.array([phi, theta, psi])
+    return np.array([phi, theta, psi])
 
 
 def rot_to_ea_deg(rot):
@@ -123,20 +125,25 @@ def ea_deg_to_rot(ea_deg):
     
 
 def quaternion_to_rot(quaternion):
+    """This function converts a quaternion of type [x y z w]
+    into a rotation matrix."""
 
     q = quaternion
     q_v = q[0:3]
     q_n = q[3]
-    qc = numpy.concatenate([-q_v,[q_n]])
+    qc = np.concatenate([-q_v,[q_n]])
 
-    rot  = numpy.dot(q,qc)*numpy.identity(3) + 2*q_n*skew(q_v) + 2*numpy.outer(q_v,q_v)
+    rot  = np.dot(q,qc)*np.identity(3) + 2*q_n*skew(q_v) + 2*np.outer(q_v,q_v)
 
     return rot
     
     
 def rot_to_quaternion(rot_matrix):
+    """This function converts a rotation matrix
+    into a quaternion of type [x y z w]."""
 
-     q_n = numpy.sqrt(1.0 + rot_matrix[0,0] + rot_matrix[1,1] + rot_matrix[2,2])/2.0
-     q_v  = numpy.array([rot_matrix[2,1] - rot_matrix[1,2], rot_matrix[0,2] - rot_matrix[2,0],rot_matrix[1,0] - rot_matrix[0,1]])/(4*q_n)
+    r = rot_matrix 
+    q_n = np.sqrt(1.0 + r[0,0] + r[1,1] + r[2,2])/2.0
+    q_v  = np.array([r[2,1]-r[1,2], r[0,2]-r[2,0], r[1,0]-r[0,1]])/(4*q_n)
 
-     return numpy.concatenate([q_v,[q_n]])
+    return np.concatenate([q_v, np.array(q_n)])

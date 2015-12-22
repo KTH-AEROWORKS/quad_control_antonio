@@ -28,7 +28,7 @@ import mocap.msg
 # iporting the actual simulators and their parameters
 import simulators.iris_simulator_zero as isz
 import simulators.iris_simulator_stabilize_mode as issm
-import simulators.iris_simulator_parameters as ssp
+import simulators.iris_simulator_parameters as isp
 
 import utils.utility_functions as uf
 
@@ -43,15 +43,16 @@ class IrisSimulatorNode():
     def __init__(self):
     
         # inizializing the state of the quad
-        self.pos = numpy.array([0.0, 0.0, 1.0])
-        self.rot = numpy.eye(3)
-        self.vel = numpy.zeros(3)
+        init_time = 0.0
+        init_pos = isp.init_pos
+        init_rot = numpy.eye(3)
+        init_vel = numpy.array([0.0, 0.0, 0.0])
+        
+        self._simulator = issm.IrisSimulatorStabilizeMode(init_time, init_pos, init_rot, init_vel)
 
-        # initializing the input
-        self.rc_input = ssp.NEUTRAL_RC_INPUT
 
-
-    def write_quad_state_msg(self, pos, rot, vel):
+    @classmethod
+    def _write_quad_state_msg(self, pos, rot, vel):
         """Converts the local state of the quad into a 'QuadPositionDerived'
         message from the mocap package.
         Warning. 'QuadPositionDerived' was maybe a poorly chosen name, since
@@ -78,7 +79,7 @@ class IrisSimulatorNode():
         
         return msg
 
-
+    
     def get_cmd_msg(self, msg):
         """This is the callback function that is called when a new value of the
         control input is received from the controller.
@@ -87,7 +88,7 @@ class IrisSimulatorNode():
         position of the sticks of the IRIS remote.
         """
         
-        self.rc_input = msg.channels[0:4]
+        self._rc_input = msg.channels[0:4]
 
 
     def work(self):
@@ -97,13 +98,11 @@ class IrisSimulatorNode():
         # initialize a ROS node corresponding to the simulator
         rospy.init_node('iris_simulator_node')
 
-        # initialize the time
+        # get initial time
         initial_time = rospy.get_time()
-        self.time = 0.0
 
-        # initialize the simulator
-        #self.simulator = issm.IrisSimulatorStabilizeMode(self.time, self.pos, self.rot, self.vel)
-        self.simulator = isz.IrisSimulatorZero(self.time, self.pos, self.rot, self.vel)
+        # initialize rc input
+        self._rc_input = list(isp.neutral_cmd)
 
         # subscriber for the control input
         quad_cmd_sub = rospy.Subscriber(
@@ -126,12 +125,12 @@ class IrisSimulatorNode():
             new_time = rospy.get_time() - initial_time
 
             # publish the quad state
-            quad_state_msg = self.write_quad_state_msg(self.pos, self.rot, self.vel)
+            time, pos, rot, vel = self._simulator.get_time_state()
+            quad_state_msg = self._write_quad_state_msg(pos, rot, vel)
             quad_state_pub.publish(quad_state_msg)
 
             # update the quad state
-            #self.p, self.v, self.rot = unvectorize_quad_state(self.solver.y)
-            self.time, self.pos, self.rot, self.vel = self.simulator.update_state(self.rc_input, new_time)
+            self._simulator.update(self._rc_input, new_time)
 
             # let the node sleep
             rate.sleep()

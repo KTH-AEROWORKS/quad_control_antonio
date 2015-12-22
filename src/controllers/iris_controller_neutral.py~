@@ -10,5 +10,5 @@ class IrisControllerNeutral(ic.IrisController):
         ic.IrisController.__init__(self)
 
     def control_law(self, pos, rot, vel, rp, rv, ra, rj, rs, rc):
-        cmd = icp.NEUTRAL_CONTROL_INPUT
+        cmd = icp.neutral_cmd
         return cmd

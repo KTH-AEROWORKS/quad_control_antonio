@@ -21,6 +21,7 @@ class IrisController:
                 four channels of the remote
         """
         
+        raise NotImplementedError
         cmd = [None, None, None, None]
         
         return cmd

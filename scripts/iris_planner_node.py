@@ -18,7 +18,7 @@ It is needed by ROS to understand that this file corresponds to a ROS node.
 
 import rospy
 import numpy
-import quad_control.msg as qcm
+import quad_control_antonio.msg as qcam
 import planners.trajectory_circle as ct
 
 
@@ -29,14 +29,14 @@ def trajectory_to_referencetrajectorymsg(p, v, a, j, s, c):
     'ReferenceTrajectoryMsg object'.
     """
 
-    msg = qcm.ReferenceTrajectoryMsg()
+    msg = qcam.ReferenceTrajectoryMsg()
 
-    msg.p = p
-    msg.v = v
-    msg.a = a
-    msg.j = j
-    msg.s = s
-    msg.c = c
+    msg.position = p
+    msg.velocity = v
+    msg.acceleration = a
+    msg.jerk = j
+    msg.snap = s
+    msg.crackle = c
 
     return msg
 
@@ -53,14 +53,14 @@ def work():
     topic = 'iris_reference_trajectory'
 
     # instantiate the publisher
-    pub = rospy.Publisher(topic, qcm.ReferenceTrajectoryMsg, queue_size=10)
+    pub = rospy.Publisher(topic, qcam.ReferenceTrajectoryMsg, queue_size=10)
 
     # setting the frequency of execution
     rate = rospy.Rate(1e2)
 
     # trajectory to be published
     trajectory = ct.TrajectoryCircle(
-        [0.0, 0.0, 1.0, numpy.pi], numpy.eye(3), 2.0, 0.3)
+        [0.0, 0.0, 1.0, 0.0], numpy.eye(3), 2.0, 300.0, 2.0, 0.3)
 
     # do work
     while not rospy.is_shutdown():

@@ -4,6 +4,6 @@
     <node pkg="quad_control_antonio" name="iris_controller_node" type="iris_controller_node.py"/>
     <node pkg="quad_control_antonio" name="iris_planner_node" type="iris_planner_node.py"/>
 
-    <!--node pkg="rqt_graph" name="" type="rqt_graph"/-->
+    <node pkg="rqt_graph" name="" type="rqt_graph"/>
 
 </launch>
